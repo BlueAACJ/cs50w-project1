@@ -1,3 +1,14 @@
 pip3 install -r requirements.txt
 python -m flask run 
 flask run 
+
+
+pip3 install -r requirements.txt 
+export FLASK_APP=application.py
+set FLASK_APP=application.py
+DATABASE_URL
+flask run 
+
+
+flask run 
+
