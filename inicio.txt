@@ -12,3 +12,13 @@ flask run
 
 flask run 
 
+CREATE TABLE review (
+id SERIAL PRIMARY KEY,
+user_id SERIAL REFERENCES users,
+isbn_id INTEGER REFERENCES books, 
+title TEXT REFERENCES books, 
+author TEXT REFERENCES books, 
+year TEXT REFERENCES books, 
+review_count INTEGER, 
+average_score DECIMAL
+);
