@@ -1,6 +1,8 @@
+# from crypt import methods
 import os
 
 from dotenv import load_dotenv
+from flask import *
 from flask import Flask, session
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -8,7 +10,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
 
-load_dotenv()
+# load_dotenv()
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -25,6 +27,10 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
+@app.route("/", methods = ['GET', 'POST'])
 def index():
-    return "Project 1: TODO"
+    session.clear()
+    if request.method == "POST":
+        return redirect("/")
+    else:
+        return render_template("login.html")

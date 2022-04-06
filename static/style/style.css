@@ -19,4 +19,18 @@
 .div_registrarse {
   text-align: center;
 }
+
+#home {
+  font-size: x-large !important;
+  color: blue;
+}
+
+/*#prueba{
+    background-color: red ;
+}*/
+#footer {
+  background-color: black;
+  font-size: large;
+  color: white;
+}
 /*# sourceMappingURL=style.css.map */
