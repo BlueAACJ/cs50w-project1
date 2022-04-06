@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    log in
+    registrarse
 {% endblock %}
 
 {% block main %}
-    <form class="formulario" action="/login" method="post">
+    <form class="formulario" action="/registrarse" method="post">
     <div class="form-group" class= "texto_inicio_sesion">
         <input autocomplete= "off" type="text" name="correo" class="form-control" id="formGroupExampleInput" placeholder="Direccion de correo electronico">
     </div>
@@ -13,7 +13,7 @@
         <input type="password" name="contrasena" class="form-control" id="formGroupExampleInput" placeholder="contrasena">
     </div>
     <div class="div_registrarse">
-        <button type="submit" class="btn btn-primary" id="iniciar_sesion" >Iniciar sesion</button>      
+        <button type="submit" class="btn btn-primary" id="registrarse" >Crear Cuenta</button>      
     </div>
     </form>
 {% endblock %}
