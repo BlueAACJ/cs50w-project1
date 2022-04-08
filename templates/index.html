@@ -1,27 +1,32 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    index
+  index
 {% endblock %}
 
 {% block main %}
-    <!-- {{name}} -->
-    <table class="table table-dark">
-        <thead>
-            <tr>
-              <th scope="col"> ISBN </th>
-              <th scope="col"> titulo </th>
-            </tr>
-          </thead>
-        <tbody>
+  {% if session.id %}    
+    <table class="table">
+      <thead> 
+        <tr>
+          <th scope="col">ISBN</th>
+          <th scope="col">Titulo</th>
+          <th scope="col">Autor</th>
+          <th scope="col">Ano</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in libros %}
           <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
+            <td>{{i.isbn}}</td>
+            <td>{{i.title}}</td>
+            <td>{{i.author}}</td>
+            <td>{{i.year}}</td>
           </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-          </tr>
-        </tbody>
-      </table>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <img src="/static/images/fondo.jpg" class="img-fluid" alt="...">
+  {% endif %}
 {% endblock %}

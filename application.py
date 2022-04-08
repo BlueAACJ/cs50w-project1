@@ -1,13 +1,13 @@
 from cgitb import lookup
-# from crypt import methods
 from inspect import Attribute
 import os
+from tokenize import String
 
 from dotenv import load_dotenv
 from flask import *
 from flask import Flask, session
 from flask_session import Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, null
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
@@ -28,14 +28,18 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 
 db = scoped_session(sessionmaker(bind=engine))
 
-
 @app.route("/", methods = ['GET', 'POST'])
 def index():
+    # session.clear()
     if request.method == "POST":
         busqueda = request.form.get("busqueda")
+        busqueda = str.capitalize(busqueda)
         libro = db.execute("SELECT * FROM books WHERE isbn LIKE :busqueda OR title LIKE :busqueda OR author LIKE :busqueda",
-                    {"busqueda":"%"+busqueda+"%"}).fetchall()
-        print(libro)
+                            {"busqueda":"%"+busqueda+"%"}).fetchall()
+        if len(libro) == 0:
+            return render_template("error.html")
+
+        return render_template("index.html", libros = libro)
     return render_template("index.html")
 
 @app.route("/registrarse", methods = ['GET', 'POST'])
@@ -59,7 +63,7 @@ def registrarse():
         db.commit()
 
         # redireccionamos al index 
-        return redirect("/")
+        return redirect("/login")
     else:
         return render_template("registrarse.html")
 
@@ -81,13 +85,12 @@ def login():
         if len(rows) == 1:
             # como el usuario esta registrado lo enviamos al index 
             session["id"] = rows[0]["id"]
-            name = rows[0]["username"]
-            print("sesion ")
-            return render_template("index.html", name=name)
+            #name = rows[0]["username"]
+            # print(name)
+            return render_template("index.html")
         else:
-            # Tengo que hacer que redirija hacia un error de registro
+            # Ya que el usuario no tiene cuenta lo redirigimos al registro 
             return render_template("registrarse.html")
-          
     else:
         print("hola")
         return render_template("login.html") 
@@ -96,4 +99,5 @@ def login():
 def logout():
     session.clear()
     return redirect("/login")
+
 
