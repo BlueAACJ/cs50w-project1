@@ -1,11 +1,11 @@
 # Project 1
 Requerimientos del project 1:
 
-Registro: Los usuarios deberían ser capaces de registrarse en tu sitio web, proveyendo (como mínimo) un nombre de usuario y una contraseña.
+* Registro: Los usuarios deberían ser capaces de registrarse en tu sitio web, proveyendo (como mínimo) un nombre de usuario y una contraseña.
 
-Inicio de Sesión: Los usuarios, una vez registrados, deberían ser capaces de iniciar sesión en tu sitio web con su nombre de usuario y contraseña.
+* Inicio de Sesión: Los usuarios, una vez registrados, deberían ser capaces de iniciar sesión en tu sitio web con su nombre de usuario y contraseña.
 
-Cierre de sesión: Los usuarios conectados deberían ser capaces de cerrar sesión.
+* Cierre de sesión: Los usuarios conectados deberían ser capaces de cerrar sesión.
 
 * Importar: Se le proporciona en este proyecto un archivo llamado books.csv, el cual es una hoja de cálculo en formato CSV de 5000 libros diferentes. Cada uno tiene un número ISBN, un título, un autor, y un año de publicación. En un archivo Python llamado import.py separado de tu aplicación web, escriba un programa que tome los libros y los importe a su base de datos PostgreSQL. Primero necesitarás decidir qué tablas crear, qué columnas esas tablas deberían tener, y cómo se deberían relacionar entre ellas. Ejecuta este programa con correr python3 import.py para importar los libros a tu base de datos, y envía este programa con el resto del código de tu proyecto.
 

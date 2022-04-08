@@ -1,4 +1,5 @@
 from cgitb import lookup
+# from crypt import methods
 from inspect import Attribute
 import os
 
@@ -28,8 +29,13 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
+@app.route("/", methods = ['GET', 'POST'])
 def index():
+    if request.method == "POST":
+        busqueda = request.form.get("busqueda")
+        libro = db.execute("SELECT * FROM books WHERE isbn LIKE :busqueda OR title LIKE :busqueda OR author LIKE :busqueda",
+                    {"busqueda":"%"+busqueda+"%"}).fetchall()
+        print(libro)
     return render_template("index.html")
 
 @app.route("/registrarse", methods = ['GET', 'POST'])
@@ -70,12 +76,24 @@ def login():
                             {"username": correo, "hash": contrasena}).fetchall()
 
         # Verificamos que haya introducido correctamente la informacion 
-        #  con len(rows) != 1 sabemos que el usuario esta registrado 
-        if len(rows) != 1:
+        #  con len(rows) == 1 sabemos que el usuario esta registrado 
+        # print(rows[0]["id"])
+        if len(rows) == 1:
             # como el usuario esta registrado lo enviamos al index 
-            return render_template("index.html")
+            session["id"] = rows[0]["id"]
+            name = rows[0]["username"]
+            print("sesion ")
+            return render_template("index.html", name=name)
         else:
             # Tengo que hacer que redirija hacia un error de registro
             return render_template("registrarse.html")
+          
     else:
-        return render_template("login.html")
+        print("hola")
+        return render_template("login.html") 
+
+@app.route("/logout", methods = ['GET', 'POST'])
+def logout():
+    session.clear()
+    return redirect("/login")
+
