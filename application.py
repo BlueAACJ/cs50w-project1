@@ -1,6 +1,7 @@
 from cgitb import lookup
 from inspect import Attribute
 import os
+from tkinter import NO
 from tokenize import String
 
 from dotenv import load_dotenv
@@ -11,8 +12,6 @@ from sqlalchemy import create_engine, null
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
-
-# load_dotenv()
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -30,17 +29,18 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/", methods = ['GET', 'POST'])
 def index():
-    # session.clear()
     if request.method == "POST":
         busqueda = request.form.get("busqueda")
         busqueda = str.capitalize(busqueda)
         libro = db.execute("SELECT * FROM books WHERE isbn LIKE :busqueda OR title LIKE :busqueda OR author LIKE :busqueda",
                             {"busqueda":"%"+busqueda+"%"}).fetchall()
+
         if len(libro) == 0:
             return render_template("error.html")
 
         return render_template("index.html", libros = libro)
-    return render_template("index.html")
+    else:
+        return render_template("index.html")
 
 @app.route("/registrarse", methods = ['GET', 'POST'])
 def registrarse():
@@ -81,7 +81,6 @@ def login():
 
         # Verificamos que haya introducido correctamente la informacion 
         #  con len(rows) == 1 sabemos que el usuario esta registrado 
-        # print(rows[0]["id"])
         if len(rows) == 1:
             # como el usuario esta registrado lo enviamos al index 
             session["id"] = rows[0]["id"]
@@ -92,7 +91,7 @@ def login():
             # Ya que el usuario no tiene cuenta lo redirigimos al registro 
             return render_template("registrarse.html")
     else:
-        print("hola")
+        # print("hola")
         return render_template("login.html") 
 
 @app.route("/logout", methods = ['GET', 'POST'])
@@ -100,4 +99,19 @@ def logout():
     session.clear()
     return redirect("/login")
 
+@app.route("/api/", methods =['GET'])
+def api(isbn):
+    if request.method == "GET":
+        books = db.execute("SELECT * FROM books WHERE isbn= : isbn", {"isbn": isbn}).fetchone()
+        if books is None:
+            return jsonify({"error": "invalid isbn"}), 404
 
+        return jsonify({
+            "title": books.title,
+            "author": books.author,
+            "year": books.year, 
+            "isbn": books.isbn, 
+            "review_count": books.review_count,
+            "average_score": books.average_score, 
+        })
+    return render_template("paginalibro.html", jsonify=jsonify)
