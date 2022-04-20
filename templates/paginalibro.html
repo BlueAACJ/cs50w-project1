@@ -5,7 +5,32 @@
 {% endblock %}
 
 {% block main%}
-    <li>
-        <a href="/"></a>
-    </li>
+    {% for i in info %}
+        <p>{{i.isbn}}</p>
+        <p>{{i.title}}</p>
+        <p>{{i.author}}</p>
+        <p>{{i.year}}</p>
+    {% endfor %}
+    <p>{{descripcion}}</p>
+    <p>{{averageRating}}</p>
+    <p>{{ratingsCount}}</p>
+    <img src="{{imagen}}">
+
+    {% for i in info %}
+    <form action="/paginalibro/{{i.isbn}}" method="post">
+        <div>
+            <input type="text" name="resena">
+            <button type="submit" id="resena" >publicar</button>      
+        </div>
+        <div>
+            <select name="puntuacion">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+    </form>
+    {% endfor %}
 {% endblock %}

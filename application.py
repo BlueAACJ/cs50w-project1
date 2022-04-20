@@ -1,4 +1,5 @@
-from cgitb import lookup
+# from cgitb import lookup
+import requests
 from inspect import Attribute
 import os
 from tkinter import NO
@@ -99,19 +100,68 @@ def logout():
     session.clear()
     return redirect("/login")
 
-@app.route("/api/", methods =['GET'])
-def api(isbn):
-    if request.method == "GET":
-        books = db.execute("SELECT * FROM books WHERE isbn= : isbn", {"isbn": isbn}).fetchone()
-        if books is None:
-            return jsonify({"error": "invalid isbn"}), 404
+# recibe un string isbn 
+@app.route("/paginalibro/<string:isbn>", methods = ['GET', 'POST'])
+def paginalibro(isbn):
+    if request.method == "POST":
+        response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
+        try:
+            descripcion = response ["items"][0]["volumeInfo"]["description"]
+        except:
+            descripcion = "Descripcion no disponible"
 
-        return jsonify({
-            "title": books.title,
-            "author": books.author,
-            "year": books.year, 
-            "isbn": books.isbn, 
-            "review_count": books.review_count,
-            "average_score": books.average_score, 
-        })
-    return render_template("paginalibro.html", jsonify=jsonify)
+        try:
+            averageRating = response ["items"][0]["volumeInfo"]["averageRating"]
+        except:
+            averageRating = "Puntaje promerio no disponible"        
+
+        try:
+            ratingsCount = response ["items"][0]["volumeInfo"]["ratingsCount"]         
+        except:
+            ratingsCount = "Numero de puntuaciones no disponible " 
+
+        try:
+            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]
+        except:
+            imagen = "https://th.bing.com/th/id/R.74654977efcc4ed97f49758d1490c66a?rik=UfxlrZKQU0Vhhg&riu=http%3a%2f%2fimg2.wikia.nocookie.net%2f__cb20140827124248%2fmonsterhunterespanol%2fes%2fimages%2fa%2faa%2fImagen-no-disponible-282x300.png&ehk=H4Cryldwr99UjRttRTd5V4ZIqR%2blqG%2fQoggdMl7yECo%3d&risl=&pid=ImgRaw&r=0"
+    
+        info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+
+        puntuacion = request.form.get("puntuacion")
+        resena = request.form.get("resena")
+        if not resena:
+            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
+
+        if not puntuacion:
+            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
+
+        datos = db.execute("INSERT INTO review (score, review, isbn, user_id) VALUES (:score, :review, :isbn, :user_id)", {"score":puntuacion, "review":resena, "isbn":isbn,"user_id":session["id"]})
+        db.commit()
+
+        return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
+    else:
+        response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
+        try:
+            descripcion = response ["items"][0]["volumeInfo"]["description"]
+        except:
+            descripcion = "Descripcion no disponible"
+
+        try:
+            averageRating = response ["items"][0]["volumeInfo"]["averageRating"]
+        except:
+            averageRating = "Puntaje promerio no disponible"        
+
+        try:
+            ratingsCount = response ["items"][0]["volumeInfo"]["ratingsCount"]         
+        except:
+            ratingsCount = "Numero de puntuaciones no disponible " 
+               
+        try:
+            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"]
+        except:
+            imagen = "https://th.bing.com/th/id/R.74654977efcc4ed97f49758d1490c66a?rik=UfxlrZKQU0Vhhg&riu=http%3a%2f%2fimg2.wikia.nocookie.net%2f__cb20140827124248%2fmonsterhunterespanol%2fes%2fimages%2fa%2faa%2fImagen-no-disponible-282x300.png&ehk=H4Cryldwr99UjRttRTd5V4ZIqR%2blqG%2fQoggdMl7yECo%3d&risl=&pid=ImgRaw&r=0"
+
+        info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
+
+
