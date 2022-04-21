@@ -1,4 +1,3 @@
-# from cgitb import lookup
 import requests
 from inspect import Attribute
 import os
@@ -163,5 +162,3 @@ def paginalibro(isbn):
 
         info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
         return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
-
-
