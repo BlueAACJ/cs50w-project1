@@ -15,8 +15,27 @@
   border-color: green;
 }
 
+#portada_libro {
+  padding: 0px;
+  zoom: 200%;
+}
+
+#titulo_libro {
+  font-weight: 700;
+  font-size: xx-large;
+}
+
+.imagen_principal {
+  margin: 0px;
+  padding: 0px;
+}
+
 .div_registrarse {
   text-align: center;
+}
+
+.texto_info {
+  font-weight: 700;
 }
 
 #home {

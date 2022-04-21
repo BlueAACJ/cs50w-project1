@@ -6,15 +6,29 @@
 
 {% block main%}
     {% for i in info %}
-        <p>{{i.isbn}}</p>
-        <p>{{i.title}}</p>
-        <p>{{i.author}}</p>
-        <p>{{i.year}}</p>
+    <div class="container">
+        <div class="row" >
+            <p id="titulo_libro">{{i.title}}</p> 
+        </div>
+        <div class="row">
+            <div class="col-2" id="portada_libro">
+                <img src="{{imagen}}" class="img-thumbnail" alt="Responsive image">
+            </div>
+            <div class="col-8">
+                <p> <span class="texto_info">ISBN :</span> {{i.isbn}}</p>
+                <p> <span class="texto_info"> Autor:</span> {{i.author}}</p>
+                <p> <span class="texto_info">Ano de publicacion:</span> {{i.year}}</p>    
+                <p> <span class="texto_info">descripcion:</span>  {{descripcion}}</p>
+                <p> <span class="texto_info">Valoración media:</span> {{averageRating}}</p>
+                <p> <span class="texto_info">recuento de calificaciones:</span> {{ratingsCount}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">col-8</div>
+            <div class="col-8">col-4</div>
+        </div>
+    </div>
     {% endfor %}
-    <p>{{descripcion}}</p>
-    <p>{{averageRating}}</p>
-    <p>{{ratingsCount}}</p>
-    <img src="{{imagen}}">
 
     {% for i in info %}
     <form action="/paginalibro/{{i.isbn}}" method="post">
