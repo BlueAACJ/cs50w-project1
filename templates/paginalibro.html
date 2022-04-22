@@ -23,28 +23,57 @@
                 <p> <span class="texto_info">recuento de calificaciones:</span> {{ratingsCount}}</p>
             </div>
         </div>
+        {% for i in info %}
         <div class="row">
-            <div class="col-4">col-8</div>
-            <div class="col-8">col-4</div>
+            <div class="col-12">
+                <form action="/paginalibro/{{i.isbn}}" method="post">
+                    <div class="form-group">
+                        <!--<label for="exampleFormControlTextarea1">RESENA</label>-->
+                        <textarea type="text" class="form-control" name="resena" cols="30" rows="3"></textarea>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio1" value="1">
+                        <label class="form-check-label" for="inlineRadio1">1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio2" value="2">
+                        <label class="form-check-label" for="inlineRadio2">2</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio3" value="3">
+                        <label class="form-check-label" for="inlineRadio3">3</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio4" value="4">
+                        <label class="form-check-label" for="inlineRadio3">4</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio5" value="5">
+                        <label class="form-check-label" for="inlineRadio3">5</label>
+                    </div>
+                    <div>
+                        <button type="submit" id="resena" class="publicar">Publicar</button>                     
+                    </div>
+                </form>            
+            </div>
         </div>
+        {% endfor %}          
+    {% endfor %}
+    <div class="row">
+      
     </div>
-    {% endfor %}
-
-    {% for i in info %}
-    <form action="/paginalibro/{{i.isbn}}" method="post">
-        <div>
-            <input type="text" name="resena">
-            <button type="submit" id="resena" >publicar</button>      
-        </div>
-        <div>
-            <select name="puntuacion">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-        </div>
-    </form>
-    {% endfor %}
+        <p>Resenas de otros lectores</p>   
+        {% for i in reviews %}      
+            <p>
+                {{i.review}}
+                {{i.user_id}}
+                {{i.score}} 
+                {% for l in usuario %} 
+                <p>
+                    {{l.usuario}}  
+                </p>
+                {% endfor %}
+            </p>
+        {% endfor %}
+    </div>    
 {% endblock %}

@@ -9,10 +9,16 @@
   font-size: 150%;
 }
 
-#registrarse {
+.registrarse {
   font-size: 150%;
   background-color: green;
   border-color: green;
+}
+
+.publicar {
+  font-size: 100%;
+  background-color: #52bb52;
+  border-color: #52bb52;
 }
 
 #portada_libro {
@@ -43,9 +49,6 @@
   color: blue;
 }
 
-/*#prueba{
-    background-color: red ;
-}*/
 #footer {
   background-color: black;
   font-size: large;
