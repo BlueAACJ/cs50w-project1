@@ -118,45 +118,33 @@ def paginalibro(isbn):
             ratingsCount = "Numero de puntuaciones no disponible " 
 
         try:
-            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]
+            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]["smallThumbnail"]
         except:
             imagen = "https://th.bing.com/th/id/R.74654977efcc4ed97f49758d1490c66a?rik=UfxlrZKQU0Vhhg&riu=http%3a%2f%2fimg2.wikia.nocookie.net%2f__cb20140827124248%2fmonsterhunterespanol%2fes%2fimages%2fa%2faa%2fImagen-no-disponible-282x300.png&ehk=H4Cryldwr99UjRttRTd5V4ZIqR%2blqG%2fQoggdMl7yECo%3d&risl=&pid=ImgRaw&r=0"
     
-        # reviews = db.execute("SELECT * FROM review WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
-
         nombres = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
-        print(nombres) 
+        # print(nombres) 
 
         info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
         puntuacion = request.form.get("puntuacion")
         resena = request.form.get("resena") 
 
-        
+        comprobacion = db.execute("SELECT * FROM reviews WHERE user_id = :usuario AND isbn = :isbn", {"usuario": session["id"], "isbn": isbn})     
+           
+        reviews = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
-        comprobacion = db.execute("SELECT * FROM reviews WHERE user_id = :usuario AND isbn = :isbn", {"usuario": session["id"], "isbn": isbn})        
-
-        if comprobacion.rowcount == 1:
-            return "Ya existe"
-        
-        else: 
+        if comprobacion.rowcount == 0:
             db.execute("INSERT INTO reviews (score, review, isbn, user_id) VALUES (:score, :review, :isbn, :user_id)", {"score":puntuacion, "review":resena, "isbn":isbn,"user_id":session["id"]})
-            db.commit()
-         
-        """
-        if not resena:
-            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
+            db.commit()  
+            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]
+            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, comprobacion=comprobacion)         
+        else: 
+            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
 
-        if not puntuacion:
-            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
-
-        """
         return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
      
     else:
-        """nombres = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = :reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
-        print(nombres) """
-
         response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
         try:
             descripcion = response ["items"][0]["volumeInfo"]["description"]
@@ -174,7 +162,7 @@ def paginalibro(isbn):
             ratingsCount = "Numero de puntuaciones no disponible " 
                
         try:
-            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"]
+            imagen = response ["items"][0]["volumeInfo"]["imageLinks"]["smallThumbnail"]
         except:
             imagen = "https://th.bing.com/th/id/R.74654977efcc4ed97f49758d1490c66a?rik=UfxlrZKQU0Vhhg&riu=http%3a%2f%2fimg2.wikia.nocookie.net%2f__cb20140827124248%2fmonsterhunterespanol%2fes%2fimages%2fa%2faa%2fImagen-no-disponible-282x300.png&ehk=H4Cryldwr99UjRttRTd5V4ZIqR%2blqG%2fQoggdMl7yECo%3d&risl=&pid=ImgRaw&r=0"
 
@@ -183,6 +171,11 @@ def paginalibro(isbn):
         # reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
         reviews = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
-        print(reviews)
+        # print(reviews)
 
-        return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
+        comprobacion = db.execute("SELECT * FROM reviews WHERE user_id = :usuario AND isbn = :isbn", {"usuario": session["id"], "isbn": isbn})        
+
+        if comprobacion.rowcount == 1:
+            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
+
+        return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, comprobacion=comprobacion)

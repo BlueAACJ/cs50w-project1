@@ -31,6 +31,18 @@
   font-size: xx-large;
 }
 
+#mensaje_critica {
+  font-weight: 500;
+  font-size: xx-large;
+  padding: 0px;
+}
+
+#titulo_resenas_lectores {
+  font-weight: 700;
+  font-size: xx-large;
+  padding: 0px;
+}
+
 .imagen_principal {
   margin: 0px;
   padding: 0px;

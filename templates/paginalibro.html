@@ -5,8 +5,9 @@
 {% endblock %}
 
 {% block main%}
-    {% for i in info %}
+
     <div class="container">
+        {% for i in info %}        
         <div class="row" >
             <p id="titulo_libro">{{i.title}}</p> 
         </div>
@@ -23,6 +24,7 @@
                 <p> <span class="texto_info">recuento de calificaciones:</span> {{ratingsCount}}</p>
             </div>
         </div>
+        {% if comprobacion %}
         <div class="row">
             <div class="col-12">
                 <form action="/paginalibro/{{i.isbn}}" method="post">
@@ -55,17 +57,33 @@
                     </div>
                 </form>            
             </div>
-        </div>        
-    {% endfor %}
-    <div class="row">
+        </div> 
+        {% else %}
+        <div class="row">
+            <div>
+                <p> <span id="mensaje_critica">Ya hiciste una critica</span> </p>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}       
+        <div class="row">
+            <div class="col-5" id="titulo_resenas_lectores">
+                <div>
+                    <p><span > Resenas de otros lectores</span> </p>         
+                </div>                
+            </div>
+        </div>   
+        {% for i in reviews %}                   
+        <div class="row">
+            <div>
+                <p><span class="texto_info">{{i.username}} Puntuacion: {{i.score}}</span></p>            
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <p>{{i.review}}</p>
+            </div>
+        </div>
+        {% endfor %}        
     </div>
-        <p>Resenas de otros lectores</p>   
-        {% for i in reviews %}      
-            <p>
-                {{i.review}}
-                {{i.username}}
-                {{i.score}} 
-            </p>
-        {% endfor %}
-    </div>    
 {% endblock %}
