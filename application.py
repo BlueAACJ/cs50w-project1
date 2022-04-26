@@ -84,8 +84,6 @@ def login():
         if len(rows) == 1:
             # como el usuario esta registrado lo enviamos al index 
             session["id"] = rows[0]["id"]
-            #name = rows[0]["username"]
-            # print(name)
             return render_template("index.html")
         else:
             # Ya que el usuario no tiene cuenta lo redirigimos al registro 
@@ -124,24 +122,41 @@ def paginalibro(isbn):
         except:
             imagen = "https://th.bing.com/th/id/R.74654977efcc4ed97f49758d1490c66a?rik=UfxlrZKQU0Vhhg&riu=http%3a%2f%2fimg2.wikia.nocookie.net%2f__cb20140827124248%2fmonsterhunterespanol%2fes%2fimages%2fa%2faa%2fImagen-no-disponible-282x300.png&ehk=H4Cryldwr99UjRttRTd5V4ZIqR%2blqG%2fQoggdMl7yECo%3d&risl=&pid=ImgRaw&r=0"
     
-        reviews = db.execute("SELECT * FROM review WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        # reviews = db.execute("SELECT * FROM review WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+
+        nombres = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        print(nombres) 
 
         info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
         puntuacion = request.form.get("puntuacion")
         resena = request.form.get("resena") 
 
+        
+
+        comprobacion = db.execute("SELECT * FROM reviews WHERE user_id = :usuario AND isbn = :isbn", {"usuario": session["id"], "isbn": isbn})        
+
+        if comprobacion.rowcount == 1:
+            return "Ya existe"
+        
+        else: 
+            db.execute("INSERT INTO reviews (score, review, isbn, user_id) VALUES (:score, :review, :isbn, :user_id)", {"score":puntuacion, "review":resena, "isbn":isbn,"user_id":session["id"]})
+            db.commit()
+         
+        """
         if not resena:
             return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
 
         if not puntuacion:
             return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen)
 
-        datos = db.execute("INSERT INTO review (score, review, isbn, user_id) VALUES (:score, :review, :isbn, :user_id)", {"score":puntuacion, "review":resena, "isbn":isbn,"user_id":session["id"]})
-
+        """
         return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
      
     else:
+        """nombres = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = :reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        print(nombres) """
+
         response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
         try:
             descripcion = response ["items"][0]["volumeInfo"]["description"]
@@ -165,14 +180,9 @@ def paginalibro(isbn):
 
         info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
+        # reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
-        reviews = db.execute("SELECT * FROM review WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        reviews = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        print(reviews)
 
-        session["id"] = reviews[0]["user_id"]
-        id_usuario = session["id"]
-
-        usuario = db.execute("SELECT username FROM users WHERE id = :id_usuario", {"id_usuario": id_usuario}).fetchall()
-        usuario = usuario[0]["username"]
-        print(usuario)
-        return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, usuario=usuario)
-
+        return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)

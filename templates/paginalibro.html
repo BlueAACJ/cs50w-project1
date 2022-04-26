@@ -23,7 +23,6 @@
                 <p> <span class="texto_info">recuento de calificaciones:</span> {{ratingsCount}}</p>
             </div>
         </div>
-        {% for i in info %}
         <div class="row">
             <div class="col-12">
                 <form action="/paginalibro/{{i.isbn}}" method="post">
@@ -56,23 +55,16 @@
                     </div>
                 </form>            
             </div>
-        </div>
-        {% endfor %}          
+        </div>        
     {% endfor %}
     <div class="row">
-      
     </div>
         <p>Resenas de otros lectores</p>   
         {% for i in reviews %}      
             <p>
                 {{i.review}}
-                {{i.user_id}}
+                {{i.username}}
                 {{i.score}} 
-                {% for l in usuario %} 
-                <p>
-                    {{l.usuario}}  
-                </p>
-                {% endfor %}
             </p>
         {% endfor %}
     </div>    
