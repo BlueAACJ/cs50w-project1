@@ -1,3 +1,4 @@
+# from crypt import methods
 import requests
 from inspect import Attribute
 import os
@@ -122,7 +123,7 @@ def paginalibro(isbn):
         except:
             imagen = "https://th.bing.com/th/id/R.74654977efcc4ed97f49758d1490c66a?rik=UfxlrZKQU0Vhhg&riu=http%3a%2f%2fimg2.wikia.nocookie.net%2f__cb20140827124248%2fmonsterhunterespanol%2fes%2fimages%2fa%2faa%2fImagen-no-disponible-282x300.png&ehk=H4Cryldwr99UjRttRTd5V4ZIqR%2blqG%2fQoggdMl7yECo%3d&risl=&pid=ImgRaw&r=0"
     
-        nombres = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+        # nombres = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
         # print(nombres) 
 
         info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
@@ -138,11 +139,12 @@ def paginalibro(isbn):
             db.execute("INSERT INTO reviews (score, review, isbn, user_id) VALUES (:score, :review, :isbn, :user_id)", {"score":puntuacion, "review":resena, "isbn":isbn,"user_id":session["id"]})
             db.commit()  
             imagen = response ["items"][0]["volumeInfo"]["imageLinks"]
-            return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, comprobacion=comprobacion)         
+            # return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, comprobacion=comprobacion)         
+            return redirect('/paginalibro/'+ isbn)
         else: 
             return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
 
-        return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
+        #return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
      
     else:
         response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
@@ -168,10 +170,7 @@ def paginalibro(isbn):
 
         info = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
-        # reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
-
         reviews = db.execute("SELECT username, score, review FROM users JOIN reviews ON users.id = reviews.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
-        # print(reviews)
 
         comprobacion = db.execute("SELECT * FROM reviews WHERE user_id = :usuario AND isbn = :isbn", {"usuario": session["id"], "isbn": isbn})        
 
@@ -179,3 +178,27 @@ def paginalibro(isbn):
             return render_template("paginalibro.html", isbn=isbn,info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews)
 
         return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, comprobacion=comprobacion)
+
+@app.route("/api/<string:isbn>", methods = ['GET'])
+def api(isbn):
+    if request.method == "GET":
+        response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
+        
+        libro = db.execute("SELECT * FROM books WHERE isbn LIKE :busqueda OR title LIKE :busqueda OR author LIKE :busqueda",
+                            {"busqueda":"%"+isbn+"%"}).fetchall()
+
+        if len(libro) == 0:
+            return render_template("404.html"),404           
+
+        title = response ["items"][0]["volumeInfo"]["title"]
+
+        author = response ["items"][0]["volumeInfo"]["authors"]      
+
+        year = response ["items"][0]["volumeInfo"]["publishedDate"]         
+
+        review_count = response ["items"][0]["volumeInfo"]["ratingsCount"]         
+
+        average_score = response ["items"][0]["volumeInfo"]["averageRating"]         
+
+        return render_template("api.html", title=title,author=author,year=year,isbn=isbn,review_count=review_count,average_score=average_score)
+
