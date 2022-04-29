@@ -17,7 +17,7 @@ Requerimientos del project 1:
 
 * Información de Reseña de Goodreads (Google Books API): En la página de libro, también deberías mostrar (si está disponible) el puntaje promedio y cantidad de puntuaciones que el libro ha recibido de Goodreads.
 
-Acceso a API: Si los usuarios hacen una solicitud GET a la ruta /api/ de tu sitio web, donde es un número ISBN, tu sitio web debería retornar una respuesta JSON conteniendo el título del libro, autor, fecha de publicación, número ISBN, conteo de reseñas, y puntaje promedio. El JSON resultante debería seguir el siguiente formato:
+* Acceso a API: Si los usuarios hacen una solicitud GET a la ruta /api/ de tu sitio web, donde es un número ISBN, tu sitio web debería retornar una respuesta JSON conteniendo el título del libro, autor, fecha de publicación, número ISBN, conteo de reseñas, y puntaje promedio. El JSON resultante debería seguir el siguiente formato:
                         
                 {
                     "title": "Memory",
@@ -28,7 +28,7 @@ Acceso a API: Si los usuarios hacen una solicitud GET a la ruta /api/ de tu siti
                     "average_score": 5.0
                 }
                     
-Si el número ISBN solicitado no está en tu base de datos, tu sitio web debería retornar un error 404.
+* Si el número ISBN solicitado no está en tu base de datos, tu sitio web debería retornar un error 404.
 
 * Deberías estar usando comandos SQL puros (a través del método execute de SQLAlchemy) para hacer consultas a la base de datos. No deberías usar el ORM de SQLAlchemy (si te es familiar) para este proyecto.
 
@@ -37,3 +37,20 @@ Si el número ISBN solicitado no está en tu base de datos, tu sitio web deberí
 * Si has añadido algún paquete Python que necesite ser instalado para poder ejecutar tu aplicación web, ¡asegúrate de añadirlo a requirements.txt!
     
 * Más allá de estos requerimientos, ¡el diseño y apariencia del sitio web dependen de ti! También eres bienvenido a añadir características extras a tu sitio web, ¡mientras cumplas con los requerimientos expuestos arriba!
+
+Informacion sobre los archivos: 
+    error.html---> Tiene un mensaje de error al buscar un libro 
+    index.html--> Tiene la pagina principal de mi sitio Web 
+    layout.html--> Tiene el layout de mi sitio web
+    login.html--> Tiene la pagina para iniciar sesion en mi pagina web 
+    paginalibro.html--> Tiene el formato para mostrar la informacion del libro, donde poder nuestra resena y puntuacion 
+    registrarse.html--> Tiene la pagina de registro de la pagina 
+
+    application.py--> Tiene la aplicacion de mi de pagina web 
+
+    books.csv--> Tiene informacion sobre los libros 
+
+    import.py--> Archivo que user para importar la informacion de los libros a la base de datos 
+
+    style.scss--> Tiene los estilos de mi pagina web 
+    

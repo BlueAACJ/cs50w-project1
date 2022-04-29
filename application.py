@@ -228,7 +228,7 @@ def api(isbn):
     # Ejecutamos la base de datos para buscar informacion sobre el libro  
     libro = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn": isbn}).fetchall()
     # definimos el error 404 para enviarlo enformato JSon
-    error = "404"
+    error = "404"   
     
     # Verificamos si el libron esta en la base de datos si == 0 signifia que no esta en la base datos 
     if len(libro) == 0:
