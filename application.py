@@ -1,4 +1,5 @@
-# from crypt import methods
+""" Alejandro Antonio Castillo Jacamo 
+    Project-1 """
 import requests
 from inspect import Attribute
 import os
@@ -109,8 +110,8 @@ def logout():
     # redireccionamos al login 
     return redirect("/login")
 
-# Ruta oara la pagina que mostrara el libro 
-# # recibe un string isbn 
+# Ruta para la pagina que mostrara el libro 
+# recibe un string isbn 
 @app.route("/paginalibro/<string:isbn>", methods = ['GET', 'POST'])
 def paginalibro(isbn):
     if request.method == "POST":
@@ -220,25 +221,31 @@ def paginalibro(isbn):
         # Renderizamos la pagina con un mensaje al usuario sobre que ya hizo una critica del libro 
         return render_template("paginalibro.html", info=info,descripcion=descripcion, averageRating = averageRating, ratingsCount = ratingsCount,imagen=imagen, reviews=reviews, comprobacion=comprobacion)
 
-@app.route("/api/<string:isbn>", methods = ['GET'])
-def api(isbn):
-    if request.method == "GET":
-        response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
-        
-        libro = db.execute("SELECT * FROM books WHERE isbn LIKE :busqueda OR title LIKE :busqueda OR author LIKE :busqueda",
-                            {"busqueda":"%"+isbn+"%"}).fetchall()
+# Ruta para la pagina que mostrara en formato Json mi informacion sobre el libro  
+# recibe un string isbn 
+@app.route("/api/<string:isbn>")
+def api(isbn):   
+    # Ejecutamos la base de datos para buscar informacion sobre el libro  
+    libro = db.execute("SELECT * FROM books WHERE isbn = :isbn",{"isbn": isbn}).fetchall()
+    # definimos el error 404 para enviarlo enformato JSon
+    error = "404"
+    
+    # Verificamos si el libron esta en la base de datos si == 0 signifia que no esta en la base datos 
+    if len(libro) == 0:
+        # Mandomos el formato Json con el error 404
+        return jsonify ({"error": error})
+    
+    # Ejecutamos la base de datos para selccionar el contador de review
+    review_count = db.execute("SELECT COUNT(isbn) FROM reviews WHERE isbn = :isbn",{"isbn": isbn}).fetchone()
 
-        if len(libro) == 0:
-            return render_template("404.html"),404           
-
-        title = response ["items"][0]["volumeInfo"]["title"]
-
-        author = response ["items"][0]["volumeInfo"]["authors"]      
-
-        year = response ["items"][0]["volumeInfo"]["publishedDate"]         
-
-        review_count = response ["items"][0]["volumeInfo"]["ratingsCount"]         
-
-        average_score = response ["items"][0]["volumeInfo"]["averageRating"]         
-
-        return render_template("api.html", title=title,author=author,year=year,isbn=isbn,review_count=review_count,average_score=average_score)
+    # Accedemos al valor de las variables que mandaremos en formato Json 
+    title = libro[0]["title"]
+    author = libro[0]["author"]
+    year = libro[0]["year"]
+    # ejecutamos la base de datos para selccionar el promedio de puntuacion 
+    average_score = db.execute("SELECT AVG(score) FROM reviews WHERE isbn = :isbn",{"isbn": isbn}).fetchone()
+    # redondeamos la puntuacion 
+    average_score = round(average_score[0], 2)
+    
+    # mandamos el formato Json con la informacion del libro 
+    return jsonify ({"title ": title,"author": author,"year": year,"isbn": isbn,"review_count": review_count[0],"average_score": average_score})
