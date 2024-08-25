@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    registrarse
+{% endblock %}
+
+{% block main %}
+    <form class="formulario" action="/registrarse" method="post">
+    <div class="form-group" class= "texto_inicio_sesion">
+        <input autocomplete= "off" type="text" name="correo" class="form-control" id="formGroupExampleInput" placeholder="Direccion de correo electronico">
+    </div>
+    <div class="form-group" class= "texto_inicio_sesion">
+        <input type="password" name="contrasena" class="form-control" id="formGroupExampleInput" placeholder="contrasena">
+    </div>
+    <div class="div_registrarse">
+        <button type="submit" class="btn btn-primary" class="registrarse" >Crear Cuenta</button>      
+    </div>
+    </form>
+{% endblock %}

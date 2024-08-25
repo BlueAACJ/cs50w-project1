@@ -1,0 +1,42 @@
+- Explicacion de los archivos necesarios para la ejecucion del prototipo: 
+    - .env
+        Variables de entorno necesarias para la ejecucion del prototipo:
+    
+        FLASK_APP=application.py
+        Indica a Flask qué archivo debe ejecutar para iniciar la aplicación.
+
+        FLASK_DEBUG=1
+        Activa o desactiva el modo de depuración en Flask. 1 activo 0 desactivo 
+
+        MYSQL_HOST=127.0.0.1
+        Dirección del servidor MySQL. En este caso en la maquina local 
+
+        MYSQL_USER='Nombre del usuario'
+        Nombre de usuario para conectarse a MySQL.
+
+        MYSQL_PASSWORD='Contrasena para conectarse a MySQL'
+        La contraseña asociada al usuario de MySQL para la autenticación.
+
+        MYSQL_DB='NombreDeLaBD'
+        Especifica la base de datos específica en MySQL que utilizará la aplicación Flask.
+
+        SecretKey='SecretKey1234'
+        Clave secreta utilizada por Flask para la gestión de sesiones y la protección contra ataques CSRF. Ejemplo:'MessiTheGoat'
+
+    - config.py
+        Este código carga configuraciones específicas (como la configuración de Flask, la conexión a MySQL y la 
+        configuración de Passlib para el hashing seguro de contraseñas) desde variables de entorno definidas en un archivo .env, 
+        lo que facilita la configuración y la gestión de secretos sensibles fuera del código fuente.
+
+- Instalacion de los paquetes necesarios para la ejecucion del prototipo:
+    python.exe -m pip install --upgrade pip
+    pip install -r requirements.txt
+
+- Creacion de la BD:
+    Ejecucion de la query "QueryCreate.sql" para la creacion de la BD 
+
+- LLenado de la BD con la informacion de las carpetas de informacion:
+    python .\import.py
+
+- Ejecutar el prototipo:
+    flask run

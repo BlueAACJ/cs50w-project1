@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  index
+{% endblock %}
+
+{% block main %}
+  {% if session.id and libros %}    
+    <table class="table">
+      <thead> 
+        <tr>
+          <th scope="col">ISBN</th>
+          <th scope="col">Titulo</th>
+          <th scope="col">Autor</th>
+          <th scope="col">Ano</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(libros|length) %}
+          <tr>
+            <!-- target="_blank" abre nuevas paginas por cada libro -->
+            <td><a target="_blank" href="paginalibro/{{ libros[i][1] }}">{{ libros[i][1] }}</a></td>
+            <td>{{libros[i][2]}}</td>
+            <td>{{libros[i][3]}}</td>
+            <td>{{libros[i][4]}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+  <div>
+    <img src="/static/images/fondo.jpg" class="img-thumbnail" alt="Responsive image" id="imagen_principal">    
+  </div>
+  {% endif %}
+{% endblock %}

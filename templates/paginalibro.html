@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    pagina_libro
+{% endblock %}
+
+{% block main%}
+
+    <div class="container">
+        {% for i in range(info|length) %}        
+        <div class="row" >
+            <p id="titulo_libro">{{i.title}}</p> 
+        </div>
+        <div class="row">
+            <div class="col-2" id="portada_libro">
+                <img src="{{imagen}}" class="img-thumbnail" alt="Responsive image">
+            </div>
+            <div class="col-8">
+                <p> <span class="texto_info">ISBN :</span> {{info[i][1]}}</p>
+                <p> <span class="texto_info"> Autor:</span> {{info[i][3]}}</p>
+                <p> <span class="texto_info">Ano de publicacion:</span> {{info[i][4]}}</p>    
+                <p> <span class="texto_info">descripcion:</span>  {{descripcion}}</p>
+                <p> <span class="texto_info">Valoración media:</span> {{averageRating}}</p>
+                <p> <span class="texto_info">recuento de calificaciones:</span> {{ratingsCount}}</p>
+            </div>
+        </div>
+        {% if comprobacion %}
+        <div class="row">
+            <div class="col-12">
+                <form action="/paginalibro/{{info[i][1]}}" method="post">
+                    <div class="form-group">
+                        <!--<label for="exampleFormControlTextarea1">RESENA</label>-->
+                        <textarea type="text" class="form-control" name="resena" cols="30" rows="3"></textarea>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio1" value="1">
+                        <label class="form-check-label" for="inlineRadio1">1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio2" value="2">
+                        <label class="form-check-label" for="inlineRadio2">2</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio3" value="3">
+                        <label class="form-check-label" for="inlineRadio3">3</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio4" value="4">
+                        <label class="form-check-label" for="inlineRadio3">4</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="puntuacion" id="inlineRadio5" value="5">
+                        <label class="form-check-label" for="inlineRadio3">5</label>
+                    </div>
+                    <div>
+                        <button type="submit" id="resena" class="publicar">Publicar</button>                     
+                    </div>
+                </form>            
+            </div>
+        </div> 
+        {% elif not comprobacion %}
+        <div class="row">
+            <div>
+                <p> <span id="mensaje_critica">Ya hiciste una critica</span> </p>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}       
+        <div class="row">
+            <div class="col-5" id="titulo_resenas_lectores">
+                <div>
+                    <p><span > Resenas de otros lectores</span> </p>         
+                </div>                
+            </div>
+        </div>   
+        {% for i in range(reviews|length) %}                   
+        <div class="row">
+            <div>
+                <p><span class="texto_info">{{reviews[i][0]}} Puntuacion: {{reviews[i][1]}}</span></p>            
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <p>{{reviews[i][2]}}</p>
+            </div>
+        </div>
+        {% endfor %}        
+    </div>
+{% endblock %}
